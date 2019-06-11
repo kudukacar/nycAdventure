@@ -4,19 +4,20 @@
     * Get to work on time without stepping on dog poop on a nyc sidewalk.
 * Functionality and MVP Features
     * The board consists of a NYC sidewalk, cluttered with dog poop, and a user (you) avoiding the dog poop to get to work.
-    * The page consists of the board as described above, a play button, levels 1, 2, and 3 buttons, and links to Github and LinkedIn.
-    * The game has three levels, each level getting progressively more difficult because of a faster pace to get to work.
-    * Pressing play starts the game, defaulting to level 1 (if no level, selected).
+    * The page consists of the board as described above, a play button, and links to Github and LinkedIn.
+    * Pressing play starts the game.
     * Users press the spacebar to jump over poop.
     * The game ends if the user steps on poop.
-    * Users win a level if they get to work without stepping on poop.
+    * Users win if they get to work without stepping on poop.
+    * Bonus:  The game has three levels, each level getting progressively more difficult because of a faster pace to get to work.
+    * Bonus:  Users select level 1, 2, or 3 to play.
 
 * Architecture and Technologies
     * JavaScript for game logic
     * HTML5 logic for rendering
     * Webpack to bundle various scripts into a single source
       
-Implementation Timeline
+*   Implementation Timeline
     * Day 1
         * Finish project proposal
     * Day 2
