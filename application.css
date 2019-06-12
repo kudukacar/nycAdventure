@@ -44,6 +44,9 @@ table {
 
 canvas {
     border: 1px solid black;
+    background-image: url(https://backgroundcheckall.com/wp-content/uploads/2017/12/city-background-cartoon-5.jpg);
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
 }
 
 body {

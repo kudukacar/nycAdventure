@@ -90,8 +90,15 @@
 /*!*********************!*\
   !*** ./src/main.js ***!
   \*********************/
-/*! no static exports found */
-/***/ (function(module, exports) {
+/*! no exports provided */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _poop__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./poop */ "./src/poop.js");
+/* harmony import */ var _walker__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./walker */ "./src/walker.js");
+
+
 
 
 const background = new Image();
@@ -100,9 +107,113 @@ background.src = "https://backgroundcheckall.com/wp-content/uploads/2017/12/city
 document.addEventListener("DOMContentLoaded", () => {
     const canvas = document.getElementById("canvas");
     const ctx = canvas.getContext("2d");
-    background.onload = () => { ctx.drawImage(background, 0, 0, 1200, 400)};
+    // background.onload = () => { ctx.drawImage(background, 0, 0, 1200, 400)};
+    const poop = new _poop__WEBPACK_IMPORTED_MODULE_0__["default"](ctx);
+    // poop.movePoop();
+    const walker = new _walker__WEBPACK_IMPORTED_MODULE_1__["default"](ctx);
+    walker.jump();
 })
 
+
+/***/ }),
+
+/***/ "./src/poop.js":
+/*!*********************!*\
+  !*** ./src/poop.js ***!
+  \*********************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+class Poop {
+    constructor(ctx) {
+        this.x = 1200;
+        this.ctx = ctx;
+        this.dx = 2;
+
+    }
+
+    drawPoop() {
+        this.ctx.beginPath();
+        this.ctx.moveTo(this.x - 50, 390);
+        this.ctx.quadraticCurveTo(this.x - 40, 350, this.x - 60, 380);
+        this.ctx.quadraticCurveTo(this.x - 80, 390, this.x - 50, 390);
+        this.ctx.quadraticCurveTo(this.x - 10, 390, this.x, 385);
+        this.ctx.quadraticCurveTo(this.x - 70, 350, this.x - 50, 390);
+        this.ctx.fillStyle = "saddlebrown";
+        this.ctx.fill();
+    }
+
+    movePoop() {
+        setInterval(() => {
+            this.ctx.clearRect(this.x - 80, 350, 90, 90);
+            this.drawPoop();
+            if(this.x === 0) {
+                this.x = 1200;
+            }
+            this.x -= this.dx;
+        }, 15)
+
+
+    }
+}
+
+/* harmony default export */ __webpack_exports__["default"] = (Poop);
+
+/***/ }),
+
+/***/ "./src/walker.js":
+/*!***********************!*\
+  !*** ./src/walker.js ***!
+  \***********************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+class Walker {
+    constructor(ctx) {
+        this.ctx = ctx;
+        this.figure = new Image();
+        this.figure.src = 'images/walker4.png';
+        this.jumper = new Image();
+        this.jumper.src = 'images/jumper.png';
+        this.sx = [40, 540, 1040, 1540, 2040];
+        this.jx = [600, 1100, 1600];
+        this.i = 0;
+        this.dx = 0;
+        this.walkInterval = null;
+        this.jumpInterval = null;
+    }
+
+    walk() {
+       this.walkInterval =  setInterval(() => {
+            this.ctx.clearRect(this.dx, 200, 200, 200);
+            this.ctx.drawImage(this.figure, this.sx[this.i % 5], 150, 500, 500, this.dx, 200, 200, 200);
+            if(this.dx === 900) {
+                clearInterval(this.walkInterval);
+            }
+            this.i += 1;
+            this.dx += 5;
+        }, 250)
+    }
+
+    jump() {
+        this.jumpInterval = setInterval(() => {
+            this.ctx.clearRect(this.dx, 200, 200, 200);
+            this.ctx.drawImage(this.jumper, this.jx[this.i % 3], 850, 500, 500, this.dx, 185, 200, 200);
+            if (this.dx === 900) {
+                clearInterval(this.jumpInterval);
+            }
+            this.i += 1;
+            this.dx += 5;
+        }, 250)
+
+    }
+}
+
+/* harmony default export */ __webpack_exports__["default"] = (Walker);
 
 /***/ })
 
