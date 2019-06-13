@@ -86,52 +86,28 @@
 /************************************************************************/
 /******/ ({
 
-/***/ "./src/main.js":
+/***/ "./src/game.js":
 /*!*********************!*\
-  !*** ./src/main.js ***!
-  \*********************/
-/*! no exports provided */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _poop__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./poop */ "./src/poop.js");
-/* harmony import */ var _walker__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./walker */ "./src/walker.js");
-
-
-
-
-const background = new Image();
-background.src = "https://backgroundcheckall.com/wp-content/uploads/2017/12/city-background-cartoon-5.jpg";
-
-document.addEventListener("DOMContentLoaded", () => {
-    const canvas = document.getElementById("canvas");
-    const ctx = canvas.getContext("2d");
-    // background.onload = () => { ctx.drawImage(background, 0, 0, 1200, 400)};
-    const poop = new _poop__WEBPACK_IMPORTED_MODULE_0__["default"](ctx);
-    // poop.movePoop();
-    const walker = new _walker__WEBPACK_IMPORTED_MODULE_1__["default"](ctx);
-    walker.jump();
-})
-
-
-/***/ }),
-
-/***/ "./src/poop.js":
-/*!*********************!*\
-  !*** ./src/poop.js ***!
+  !*** ./src/game.js ***!
   \*********************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-class Poop {
-    constructor(ctx) {
-        this.x = 1200;
-        this.ctx = ctx;
-        this.dx = 2;
+/* harmony import */ var _walker__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./walker */ "./src/walker.js");
 
+
+class Game {
+    constructor(ctx, document) {
+        this.ctx = ctx;
+        this.document = document;
+        this.x = 1200;
+        this.dx = 2;
+        this.movePoopInterval;
+        this.setPoopTimeout;
+        this.walker = new _walker__WEBPACK_IMPORTED_MODULE_0__["default"](this.ctx);
+        this.gameOver = false;
     }
 
     drawPoop() {
@@ -146,20 +122,82 @@ class Poop {
     }
 
     movePoop() {
-        setInterval(() => {
+        this.movePoopInterval = setInterval(() => {
             this.ctx.clearRect(this.x - 80, 350, 90, 90);
             this.drawPoop();
             if(this.x === 0) {
                 this.x = 1200;
             }
+            const collision = this.walker.xPosition() >= this.xPositionEnd() && this.walker.xPosition() <= this.x;
+            if (this.walker.yPosition() >= this.yPositionStart() && collision) {
+                this.gameOver = true;
+            } 
+            if(this.gameOver === true) {
+                clearInterval(this.movePoopInterval);
+                this.walker.collision();
+                alert('Find a patch of grass to clean your shoes')
+            }
+            if(this.walker.xPosition() >= 1100) {
+                clearInterval(this.movePoopInterval);
+            }
             this.x -= this.dx;
-        }, 15)
+        }, 10)
+    }
 
+    xPositionEnd() {
+        return this.x - 60;
+    }
 
+    yPositionStart() {
+       return 385
+    }
+
+    play() {
+        this.movePoop();
+        this.walker.walk();
+        return document.addEventListener('keypress', (e) => {
+            e.preventDefault();
+            if (e.keyCode === 32) {
+                return this.walker.jump();
+            }
+        })
     }
 }
 
-/* harmony default export */ __webpack_exports__["default"] = (Poop);
+/* harmony default export */ __webpack_exports__["default"] = (Game);
+
+/***/ }),
+
+/***/ "./src/main.js":
+/*!*********************!*\
+  !*** ./src/main.js ***!
+  \*********************/
+/*! no exports provided */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _game__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./game */ "./src/game.js");
+
+
+
+document.addEventListener("DOMContentLoaded", () => {
+    const canvas = document.getElementById("canvas");
+    const ctx = canvas.getContext("2d");
+    let replay = false;
+    return document.addEventListener('keypress', (e) => {
+        e.preventDefault();
+        if (e.keyCode === 13 && replay === false) {
+            replay = true;
+            ctx.clearRect(0, 0, 1200, 400);
+            const game = new _game__WEBPACK_IMPORTED_MODULE_0__["default"](ctx, document);
+            game.play();
+        } else if(e.keyCode === 13 && replay === true) {
+            document.location.reload();
+        }
+    })
+})
+
 
 /***/ }),
 
@@ -179,38 +217,63 @@ class Walker {
         this.figure.src = 'images/walker4.png';
         this.jumper = new Image();
         this.jumper.src = 'images/jumper.png';
-        this.sx = [40, 540, 1040, 1540, 2040];
+        this.sx = [540, 1040, 1540];
         this.jx = [600, 1100, 1600];
         this.i = 0;
+        this.j = 0;
         this.dx = 0;
-        this.walkInterval = null;
-        this.jumpInterval = null;
+        this.jumping = false;
+        this.walkInterval;
+        this.gameOver = false;
     }
 
     walk() {
-       this.walkInterval =  setInterval(() => {
+        this.jumping = false;
+      this.walkInterval = setInterval(() => {
             this.ctx.clearRect(this.dx, 200, 200, 200);
-            this.ctx.drawImage(this.figure, this.sx[this.i % 5], 150, 500, 500, this.dx, 200, 200, 200);
-            if(this.dx === 900) {
+            this.ctx.drawImage(this.figure, this.sx[this.i % 3], 150, 500, 500, this.dx, 200, 200, 200);
+            if(this.dx >= 900) {
                 clearInterval(this.walkInterval);
+                this.ctx.clearRect(this.dx, 200, 200, 200);
+                this.ctx.drawImage(this.figure, 40, 150, 500, 500, this.dx, 200, 200, 200);
+                alert('You made it to work spot free!')
             }
             this.i += 1;
             this.dx += 5;
-        }, 250)
+        }, 125)
     }
+
 
     jump() {
-        this.jumpInterval = setInterval(() => {
-            this.ctx.clearRect(this.dx, 200, 200, 200);
-            this.ctx.drawImage(this.jumper, this.jx[this.i % 3], 850, 500, 500, this.dx, 185, 200, 200);
-            if (this.dx === 900) {
-                clearInterval(this.jumpInterval);
-            }
-            this.i += 1;
-            this.dx += 5;
-        }, 250)
-
+        clearInterval(this.walkInterval);
+        this.jumping = true;
+        this.ctx.clearRect(this.dx, 200, 200, 200);
+        this.ctx.drawImage(this.jumper, 1100, 850, 500, 500, this.dx, 200, 200, 180);
+        this.dx += 85;
+        if(this.gameOver === false) {
+            setTimeout(this.walk(), 1000);
+        }
     }
+
+    collision() {
+        this.gameOver = true;
+        clearInterval(this.walkInterval);
+        this.ctx.clearRect(this.dx, 200, 200, 200);
+        this.ctx.drawImage(this.figure, 40, 150, 500, 500, this.dx, 200, 200, 200);
+    }
+
+    xPosition() {
+        return this.dx + 200;
+    }
+
+    yPosition() {
+        if(this.jumping === true) {
+            return 380
+        } else {
+            return 400
+        }
+    }
+
 }
 
 /* harmony default export */ __webpack_exports__["default"] = (Walker);

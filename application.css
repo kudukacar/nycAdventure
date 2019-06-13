@@ -84,10 +84,20 @@ body > h1 {
 }
 
 body > h2 {
-    font-size: 16px;
+    font-size: 18px;
     padding: 10px 0px;
-}s
+}
+
+body > h3 {
+    font-size: 18px;
+    padding-top: 20px;
+}
+
+body > h4 {
+    font-size: 18px;
+}
 
 body > div > i {
     padding: 5px 5px;
-}
+    font-size: 18px;
+} 

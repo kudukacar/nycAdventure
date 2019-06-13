@@ -5,38 +5,63 @@ class Walker {
         this.figure.src = 'images/walker4.png';
         this.jumper = new Image();
         this.jumper.src = 'images/jumper.png';
-        this.sx = [40, 540, 1040, 1540, 2040];
+        this.sx = [540, 1040, 1540];
         this.jx = [600, 1100, 1600];
         this.i = 0;
+        this.j = 0;
         this.dx = 0;
-        this.walkInterval = null;
-        this.jumpInterval = null;
+        this.jumping = false;
+        this.walkInterval;
+        this.gameOver = false;
     }
 
     walk() {
-       this.walkInterval =  setInterval(() => {
+        this.jumping = false;
+      this.walkInterval = setInterval(() => {
             this.ctx.clearRect(this.dx, 200, 200, 200);
-            this.ctx.drawImage(this.figure, this.sx[this.i % 5], 150, 500, 500, this.dx, 200, 200, 200);
-            if(this.dx === 900) {
+            this.ctx.drawImage(this.figure, this.sx[this.i % 3], 150, 500, 500, this.dx, 200, 200, 200);
+            if(this.dx >= 900) {
                 clearInterval(this.walkInterval);
+                this.ctx.clearRect(this.dx, 200, 200, 200);
+                this.ctx.drawImage(this.figure, 40, 150, 500, 500, this.dx, 200, 200, 200);
+                alert('You made it to work spot free!')
             }
             this.i += 1;
             this.dx += 5;
-        }, 250)
+        }, 125)
     }
+
 
     jump() {
-        this.jumpInterval = setInterval(() => {
-            this.ctx.clearRect(this.dx, 200, 200, 200);
-            this.ctx.drawImage(this.jumper, this.jx[this.i % 3], 850, 500, 500, this.dx, 185, 200, 200);
-            if (this.dx === 900) {
-                clearInterval(this.jumpInterval);
-            }
-            this.i += 1;
-            this.dx += 5;
-        }, 250)
-
+        clearInterval(this.walkInterval);
+        this.jumping = true;
+        this.ctx.clearRect(this.dx, 200, 200, 200);
+        this.ctx.drawImage(this.jumper, 1100, 850, 500, 500, this.dx, 200, 200, 180);
+        this.dx += 85;
+        if(this.gameOver === false) {
+            setTimeout(this.walk(), 1000);
+        }
     }
+
+    collision() {
+        this.gameOver = true;
+        clearInterval(this.walkInterval);
+        this.ctx.clearRect(this.dx, 200, 200, 200);
+        this.ctx.drawImage(this.figure, 40, 150, 500, 500, this.dx, 200, 200, 200);
+    }
+
+    xPosition() {
+        return this.dx + 200;
+    }
+
+    yPosition() {
+        if(this.jumping === true) {
+            return 380
+        } else {
+            return 400
+        }
+    }
+
 }
 
 export default Walker;
