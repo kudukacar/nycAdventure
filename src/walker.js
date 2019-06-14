@@ -6,10 +6,8 @@ class Walker {
         this.jumper = new Image();
         this.jumper.src = 'images/jumper.png';
         this.sx = [540, 1040, 1540];
-        this.jx = [600, 1100, 1600];
         this.i = 0;
-        this.j = 0;
-        this.dx = 0;
+        this.dx = -100;
         this.jumping = false;
         this.walkInterval;
         this.gameOver = false;
@@ -17,18 +15,23 @@ class Walker {
 
     walk() {
         this.jumping = false;
-      this.walkInterval = setInterval(() => {
+        this.walkInterval = setInterval(() => {
             this.ctx.clearRect(this.dx, 200, 200, 200);
             this.ctx.drawImage(this.figure, this.sx[this.i % 3], 150, 500, 500, this.dx, 200, 200, 200);
+
             if(this.dx >= 900) {
-                clearInterval(this.walkInterval);
+            clearInterval(this.walkInterval);
                 this.ctx.clearRect(this.dx, 200, 200, 200);
                 this.ctx.drawImage(this.figure, 40, 150, 500, 500, this.dx, 200, 200, 200);
-                alert('You made it to work spot free!')
+                this.ctx.font = "34px sans-serif";
+                this.ctx.fillStyle = "white";
+                this.ctx.textAlign = "center";
+                this.ctx.fillText("You made it home spot free!", canvas.width / 2, canvas.height / 2); 
             }
+ 
             this.i += 1;
             this.dx += 5;
-        }, 125)
+        }, 150)
     }
 
 

@@ -42,11 +42,21 @@ table {
 	border-spacing: 0;
 }
 
+@-webkit-keyframes animatedBackground {
+	from { background-position: 0 0; }
+	to { background-position: 100% 0; }
+}
+
 canvas {
-    border: 1px solid black;
-    background-image: url(https://backgroundcheckall.com/wp-content/uploads/2017/12/city-background-cartoon-5.jpg);
-    background-repeat: no-repeat;
-    background-size: 100% 100%;
+    /* border: 1px solid black; */
+    /* background-image: url(https://backgroundcheckall.com/wp-content/uploads/2017/12/city-background-cartoon-5.jpg); */
+    background-image: url(https://t4.ftcdn.net/jpg/00/96/75/65/240_F_96756549_IaZNQm8X4vKEPUkllbIVcqR2fK9PqxRz.jpg);
+    background-repeat: repeat-x;
+    background-size: 150% 100%;
+    background-position: 0px 0px;
+    -webkit-animation: animatedBackground 40s linear infinite;
+    animation: animatedBackground 40s linear infinite;
+    animation-play-state: running;
 }
 
 body {
@@ -80,7 +90,7 @@ body > button:hover {
 
 body > h1 {
     font-size: 24px;
-    padding-top: 20px;
+    padding-top: 40px;
 }
 
 body > h2 {

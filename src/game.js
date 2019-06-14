@@ -1,53 +1,71 @@
 import Walker from "./walker";
 
 class Game {
-    constructor(ctx, document) {
+    constructor(ctx, document, canvas) {
+        this.canvas = canvas;
         this.ctx = ctx;
         this.document = document;
-        this.x = 1200;
+        this.x = [400, 800, 1200];
         this.dx = 2;
-        this.movePoopInterval;
-        this.setPoopTimeout;
+        this.intervalTime = [15, 15, 15];
+        this.poopIntervals = [this.movePoopInterval0, this.movePoopInterval1, this.movePoopInterval2];
+        this.checkGameOverInterval;
         this.walker = new Walker(this.ctx);
         this.gameOver = false;
     }
 
-    drawPoop() {
+    drawPoop(i) {
         this.ctx.beginPath();
-        this.ctx.moveTo(this.x - 50, 390);
-        this.ctx.quadraticCurveTo(this.x - 40, 350, this.x - 60, 380);
-        this.ctx.quadraticCurveTo(this.x - 80, 390, this.x - 50, 390);
-        this.ctx.quadraticCurveTo(this.x - 10, 390, this.x, 385);
-        this.ctx.quadraticCurveTo(this.x - 70, 350, this.x - 50, 390);
+        this.ctx.moveTo(this.x[i] - 50, 390);
+        this.ctx.quadraticCurveTo(this.x[i] - 40, 350, this.x[i] - 60, 380);
+        this.ctx.quadraticCurveTo(this.x[i] - 80, 390, this.x[i] - 50, 390);
+        this.ctx.quadraticCurveTo(this.x[i] - 10, 390, this.x[i], 385);
+        this.ctx.quadraticCurveTo(this.x[i] - 70, 350, this.x[i] - 50, 390);
         this.ctx.fillStyle = "saddlebrown";
         this.ctx.fill();
     }
 
-    movePoop() {
-        this.movePoopInterval = setInterval(() => {
-            this.ctx.clearRect(this.x - 80, 350, 90, 90);
-            this.drawPoop();
-            if(this.x === 0) {
-                this.x = 1200;
+    movePoop(i) {
+        this.poopIntervals[i] = setInterval(() => {
+            this.ctx.clearRect(this.x[i] - 80, 350, 90, 90);
+            this.drawPoop(i);
+            if (this.x[i] === 0) {
+                this.x[i] = 1200;
             }
-            const collision = this.walker.xPosition() >= this.xPositionEnd() && this.walker.xPosition() <= this.x;
+            const collision = this.walker.xPosition() >= this.xPositionEnd(i) && this.walker.xPosition() <= this.x[i];
             if (this.walker.yPosition() >= this.yPositionStart() && collision) {
                 this.gameOver = true;
-            } 
+            }
+
             if(this.gameOver === true) {
-                clearInterval(this.movePoopInterval);
-                this.walker.collision();
-                alert('Find a patch of grass to clean your shoes')
+                clearInterval(this.poopIntervals[i]);
             }
-            if(this.walker.xPosition() >= 1100) {
-                clearInterval(this.movePoopInterval);
+            if (this.walker.xPosition() >= 1100) {
+                clearInterval(this.poopIntervals[i]);
+                this.canvas.style.animationPlayState = 'paused';
             }
-            this.x -= this.dx;
-        }, 10)
+            this.x[i] -= this.dx;
+        }, this.intervalTime[i])
     }
 
-    xPositionEnd() {
-        return this.x - 60;
+    checkGameOver() {
+        this.checkGameOverInterval = setInterval(() => {
+            if (this.gameOver === true) {
+                this.walker.collision();
+                this.canvas.style.animationPlayState = 'paused';
+                this.ctx.font = "34px sans-serif";
+                this.ctx.fillStyle = "black";
+                this.ctx.textAlign = "center";
+                this.ctx.fillText("Find a patch of grass to clean your shoes!", canvas.width / 2, canvas.height / 2);
+            }
+            if(this.gameOver === true) {
+                clearInterval(this.checkGameOverInterval);
+            }
+        }, 5)
+    }
+
+    xPositionEnd(i) {
+        return this.x[i] - 55;
     }
 
     yPositionStart() {
@@ -55,9 +73,12 @@ class Game {
     }
 
     play() {
-        this.movePoop();
+        for(let i = 0; i < this.x.length; i++) {
+            this.movePoop(i);
+        }
         this.walker.walk();
-        return document.addEventListener('keypress', (e) => {
+        this.checkGameOver();
+        return this.document.addEventListener('keypress', (e) => {
             e.preventDefault();
             if (e.keyCode === 32) {
                 return this.walker.jump();
