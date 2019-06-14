@@ -26,6 +26,7 @@
         * Complete board design and rendering
     * Day 3
         * Complete obstacle (poop) rendering and functionality
+        * Complete player rendering and functionality
         * Complete obstacle collision (stepping on poop)
     * Day 4
         * Complete game over condition
