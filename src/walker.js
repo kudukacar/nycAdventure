@@ -1,6 +1,8 @@
 class Walker {
-    constructor(ctx) {
+    constructor(ctx, document, time) {
         this.ctx = ctx;
+        this.document = document;
+        this.time = time;
         this.figure = new Image();
         this.figure.src = 'images/walker4.png';
         this.jumper = new Image();
@@ -21,27 +23,34 @@ class Walker {
 
             if(this.dx >= 900) {
             clearInterval(this.walkInterval);
-                this.ctx.clearRect(this.dx, 200, 200, 200);
-                this.ctx.drawImage(this.figure, 40, 150, 500, 500, this.dx, 200, 200, 200);
+                this.gameOver === true;
+                // this.ctx.clearRect(this.dx, 200, 200, 200);
+                // this.ctx.drawImage(this.figure, 40, 150, 500, 500, this.dx, 200, 200, 200);
                 this.ctx.font = "34px sans-serif";
                 this.ctx.fillStyle = "white";
                 this.ctx.textAlign = "center";
                 this.ctx.fillText("You made it home spot free!", canvas.width / 2, canvas.height / 2); 
+                setTimeout(() => {
+                    this.document.location.reload();
+                }, 2500)
             }
  
             this.i += 1;
             this.dx += 5;
-        }, 150)
+        }, this.time)
+    }
+    win() {
+
     }
 
 
     jump() {
-        clearInterval(this.walkInterval);
-        this.jumping = true;
-        this.ctx.clearRect(this.dx, 200, 200, 200);
-        this.ctx.drawImage(this.jumper, 1100, 850, 500, 500, this.dx, 200, 200, 180);
-        this.dx += 85;
         if(this.gameOver === false) {
+            clearInterval(this.walkInterval);
+            this.jumping = true;
+            this.ctx.clearRect(this.dx, 200, 200, 185);
+            this.ctx.drawImage(this.jumper, 1100, 850, 500, 500, this.dx, 200, 200, 180);
+            this.dx += 95;
             setTimeout(this.walk(), 1000);
         }
     }
@@ -49,8 +58,8 @@ class Walker {
     collision() {
         this.gameOver = true;
         clearInterval(this.walkInterval);
-        this.ctx.clearRect(this.dx, 200, 200, 200);
-        this.ctx.drawImage(this.figure, 40, 150, 500, 500, this.dx, 200, 200, 200);
+        // this.ctx.clearRect(this.dx, 200, 200, 200);
+        // this.ctx.drawImage(this.figure, 40, 150, 500, 500, this.dx, 200, 200, 200);
     }
 
     xPosition() {

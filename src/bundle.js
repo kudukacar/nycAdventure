@@ -96,19 +96,23 @@
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _walker__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./walker */ "./src/walker.js");
+/* harmony import */ var _sound__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./sound */ "./src/sound.js");
+
 
 
 class Game {
-    constructor(ctx, document, canvas) {
+    constructor(ctx, document, canvas, time, intervalTime) {
         this.canvas = canvas;
         this.ctx = ctx;
         this.document = document;
+        this.time = time;
         this.x = [400, 800, 1200];
         this.dx = 2;
-        this.intervalTime = [15, 15, 15];
+        this.intervalTime = intervalTime;
         this.poopIntervals = [this.movePoopInterval0, this.movePoopInterval1, this.movePoopInterval2];
         this.checkGameOverInterval;
-        this.walker = new _walker__WEBPACK_IMPORTED_MODULE_0__["default"](this.ctx);
+        this.walker = new _walker__WEBPACK_IMPORTED_MODULE_0__["default"](this.ctx, this.document, this.time);
+        this.poopSound = new _sound__WEBPACK_IMPORTED_MODULE_1__["default"]("sounds/sound2.mp4", this.document);
         this.gameOver = false;
     }
 
@@ -125,13 +129,14 @@ class Game {
 
     movePoop(i) {
         this.poopIntervals[i] = setInterval(() => {
-            this.ctx.clearRect(this.x[i] - 80, 350, 90, 90);
+            this.ctx.clearRect(this.x[i] - 60, 350, 65, 65);
             this.drawPoop(i);
             if (this.x[i] === 0) {
                 this.x[i] = 1200;
             }
             const collision = this.walker.xPosition() >= this.xPositionEnd(i) && this.walker.xPosition() <= this.x[i];
             if (this.walker.yPosition() >= this.yPositionStart() && collision) {
+                this.poopSound.play();
                 this.gameOver = true;
             }
 
@@ -155,6 +160,9 @@ class Game {
                 this.ctx.fillStyle = "black";
                 this.ctx.textAlign = "center";
                 this.ctx.fillText("Find a patch of grass to clean your shoes!", canvas.width / 2, canvas.height / 2);
+                setTimeout(() => {
+                    this.document.location.reload();
+                }, 2500)
             }
             if(this.gameOver === true) {
                 clearInterval(this.checkGameOverInterval);
@@ -205,22 +213,82 @@ __webpack_require__.r(__webpack_exports__);
 document.addEventListener("DOMContentLoaded", () => {
     const canvas = document.getElementById("canvas");
     const ctx = canvas.getContext("2d");
+    const level1 = document.getElementById("level1");
+    const time1 = 200;
+    const intervalTime1 = [20, 20, 20];
+    const level2 = document.getElementById("level2");
+    const time2 = 150;
+    const intervalTime2 = [15, 15, 15];
+    const level3 = document.getElementById("level3");
+    const time3 = 100;
+    const intervalTime3 = [10, 10, 10];
     canvas.style.animationPlayState='paused';
     let replay = false;
-    return document.addEventListener('keypress', (e) => {
-        e.preventDefault();
-        if (e.keyCode === 13 && replay === false) {
+    level1.addEventListener('click', (e) => {
+        if (replay === false) {
+            e.preventDefault();
             replay = true;
             ctx.clearRect(0, 0, 1200, 400);
-            const game = new _game__WEBPACK_IMPORTED_MODULE_0__["default"](ctx, document, canvas);
+            const game = new _game__WEBPACK_IMPORTED_MODULE_0__["default"](ctx, document, canvas, time1, intervalTime1);
             game.play();
-            canvas.style.animationPlayState='running';
-        } else if(e.keyCode === 13 && replay === true) {
-            document.location.reload();
+            canvas.style.animationPlayState = 'running';
+        } 
+    }) 
+    level2.addEventListener('click', (e) => {
+        if (replay === false) {
+            e.preventDefault();
+            replay = true;
+            ctx.clearRect(0, 0, 1200, 400);
+            const game = new _game__WEBPACK_IMPORTED_MODULE_0__["default"](ctx, document, canvas, time2, intervalTime2);
+            game.play();
+            canvas.style.animationPlayState = 'running';
         }
-    })
+    }) 
+    level3.addEventListener('click', (e) => {
+        if (replay === false) {
+            e.preventDefault();
+            replay = true;
+            ctx.clearRect(0, 0, 1200, 400);
+            const game = new _game__WEBPACK_IMPORTED_MODULE_0__["default"](ctx, document, canvas, time3, intervalTime3);
+            game.play();
+            canvas.style.animationPlayState = 'running';
+        }
+    }) 
 })
 
+
+/***/ }),
+
+/***/ "./src/sound.js":
+/*!**********************!*\
+  !*** ./src/sound.js ***!
+  \**********************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+class Sound {
+    constructor(src, document) {
+        this.document = document;
+        this.sound = this.document.createElement("audio");
+        this.sound.src = src;
+        this.sound.setAttribute("preload", "auto");
+        this.sound.setAttribute("controls", "none");
+        this.sound.style.display = "none";
+        this.document.body.appendChild(this.sound);
+    }
+
+    play() {
+        this.sound.play();
+    }
+    
+    stop() {
+        this.sound.pause();
+    }
+}
+
+/* harmony default export */ __webpack_exports__["default"] = (Sound);
 
 /***/ }),
 
@@ -234,8 +302,10 @@ document.addEventListener("DOMContentLoaded", () => {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 class Walker {
-    constructor(ctx) {
+    constructor(ctx, document, time) {
         this.ctx = ctx;
+        this.document = document;
+        this.time = time;
         this.figure = new Image();
         this.figure.src = 'images/walker4.png';
         this.jumper = new Image();
@@ -256,27 +326,34 @@ class Walker {
 
             if(this.dx >= 900) {
             clearInterval(this.walkInterval);
-                this.ctx.clearRect(this.dx, 200, 200, 200);
-                this.ctx.drawImage(this.figure, 40, 150, 500, 500, this.dx, 200, 200, 200);
+                this.gameOver === true;
+                // this.ctx.clearRect(this.dx, 200, 200, 200);
+                // this.ctx.drawImage(this.figure, 40, 150, 500, 500, this.dx, 200, 200, 200);
                 this.ctx.font = "34px sans-serif";
                 this.ctx.fillStyle = "white";
                 this.ctx.textAlign = "center";
                 this.ctx.fillText("You made it home spot free!", canvas.width / 2, canvas.height / 2); 
+                setTimeout(() => {
+                    this.document.location.reload();
+                }, 2500)
             }
  
             this.i += 1;
             this.dx += 5;
-        }, 150)
+        }, this.time)
+    }
+    win() {
+
     }
 
 
     jump() {
-        clearInterval(this.walkInterval);
-        this.jumping = true;
-        this.ctx.clearRect(this.dx, 200, 200, 200);
-        this.ctx.drawImage(this.jumper, 1100, 850, 500, 500, this.dx, 200, 200, 180);
-        this.dx += 85;
         if(this.gameOver === false) {
+            clearInterval(this.walkInterval);
+            this.jumping = true;
+            this.ctx.clearRect(this.dx, 200, 200, 185);
+            this.ctx.drawImage(this.jumper, 1100, 850, 500, 500, this.dx, 200, 200, 180);
+            this.dx += 95;
             setTimeout(this.walk(), 1000);
         }
     }
@@ -284,8 +361,8 @@ class Walker {
     collision() {
         this.gameOver = true;
         clearInterval(this.walkInterval);
-        this.ctx.clearRect(this.dx, 200, 200, 200);
-        this.ctx.drawImage(this.figure, 40, 150, 500, 500, this.dx, 200, 200, 200);
+        // this.ctx.clearRect(this.dx, 200, 200, 200);
+        // this.ctx.drawImage(this.figure, 40, 150, 500, 500, this.dx, 200, 200, 200);
     }
 
     xPosition() {

@@ -1,16 +1,19 @@
 import Walker from "./walker";
+import Sound from "./sound";
 
 class Game {
-    constructor(ctx, document, canvas) {
+    constructor(ctx, document, canvas, time, intervalTime) {
         this.canvas = canvas;
         this.ctx = ctx;
         this.document = document;
+        this.time = time;
         this.x = [400, 800, 1200];
         this.dx = 2;
-        this.intervalTime = [15, 15, 15];
+        this.intervalTime = intervalTime;
         this.poopIntervals = [this.movePoopInterval0, this.movePoopInterval1, this.movePoopInterval2];
         this.checkGameOverInterval;
-        this.walker = new Walker(this.ctx);
+        this.walker = new Walker(this.ctx, this.document, this.time);
+        this.poopSound = new Sound("sounds/sound2.mp4", this.document);
         this.gameOver = false;
     }
 
@@ -27,13 +30,14 @@ class Game {
 
     movePoop(i) {
         this.poopIntervals[i] = setInterval(() => {
-            this.ctx.clearRect(this.x[i] - 80, 350, 90, 90);
+            this.ctx.clearRect(this.x[i] - 60, 350, 65, 65);
             this.drawPoop(i);
             if (this.x[i] === 0) {
                 this.x[i] = 1200;
             }
             const collision = this.walker.xPosition() >= this.xPositionEnd(i) && this.walker.xPosition() <= this.x[i];
             if (this.walker.yPosition() >= this.yPositionStart() && collision) {
+                this.poopSound.play();
                 this.gameOver = true;
             }
 
@@ -57,6 +61,9 @@ class Game {
                 this.ctx.fillStyle = "black";
                 this.ctx.textAlign = "center";
                 this.ctx.fillText("Find a patch of grass to clean your shoes!", canvas.width / 2, canvas.height / 2);
+                setTimeout(() => {
+                    this.document.location.reload();
+                }, 2500)
             }
             if(this.gameOver === true) {
                 clearInterval(this.checkGameOverInterval);
