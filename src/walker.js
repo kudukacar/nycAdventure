@@ -22,8 +22,7 @@ class Walker {
             this.ctx.drawImage(this.figure, this.sx[this.i % 3], 150, 500, 500, this.dx, 200, 200, 200);
 
             if(this.dx >= 900) {
-            clearInterval(this.walkInterval);
-                this.gameOver === true;
+                this.collision();
                 // this.ctx.clearRect(this.dx, 200, 200, 200);
                 // this.ctx.drawImage(this.figure, 40, 150, 500, 500, this.dx, 200, 200, 200);
                 this.ctx.font = "34px sans-serif";
