@@ -54,8 +54,8 @@ canvas {
     background-repeat: repeat-x;
     background-size: 150% 100%;
     background-position: 0px 0px;
-    -webkit-animation: animatedBackground 40s linear infinite;
-    animation: animatedBackground 40s linear infinite;
+    -webkit-animation: animatedBackground 30s linear infinite;
+    animation: animatedBackground 30s linear infinite;
     animation-play-state: running;
 }
 
