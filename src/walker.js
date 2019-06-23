@@ -9,6 +9,7 @@ class Walker {
         this.jumper.src = 'images/jumper.png';
         this.sx = [540, 1040, 1540];
         this.jx = [600, 1100, 1600];
+        this.dy = [200, 160, 160];
         this.i = 0;
         this.j = 0;
         this.dx = -100;
@@ -26,31 +27,27 @@ class Walker {
 
             if(this.dx >= 900) {
                 this.collision();
-                // this.ctx.clearRect(this.dx, 200, 200, 200);
-                // this.ctx.drawImage(this.figure, 40, 150, 500, 500, this.dx, 200, 200, 200);
+                setTimeout(() => {
+                    this.document.location.reload();
+                }, 2500)
                 this.ctx.font = "34px sans-serif";
                 this.ctx.fillStyle = "white";
                 this.ctx.textAlign = "center";
                 this.ctx.fillText("You made it home spot free!", canvas.width / 2, canvas.height / 2); 
-                setTimeout(() => {
-                    this.document.location.reload();
-                }, 2500)
             }
  
             this.i += 1;
             this.dx += 5;
         }, this.time)
     }
-    win() {
 
-    }
     jump() {
         if(this.gameOver === false) {
             clearInterval(this.walkInterval);
-            this.ctx.clearRect(this.dx, 200, 200, 200);
+            // this.ctx.clearRect(this.dx, 200, 200, 200);
             this.jumping = true;
             this.jumpInterval = setInterval(() => {
-                this.ctx.clearRect(this.dx, 160, 200, 200);
+                this.ctx.clearRect(this.dx, this.dy[this.j % 3], 200, 200);
                 this.ctx.drawImage(this.jumper, this.jx[this.j % 3], 850, 500, 500, this.dx, 160, 200, 200);
                 this.j += 1;
                 this.dx += 35;
@@ -67,23 +64,11 @@ class Walker {
 
     }
 
-    // jump() {
-    //     if(this.gameOver === false) {
-    //         clearInterval(this.walkInterval);
-    //         this.jumping = true;
-    //         this.ctx.clearRect(this.dx, 200, 200, 185);
-    //         this.ctx.drawImage(this.jumper, 1100, 850, 500, 500, this.dx, 200, 200, 180);
-    //         this.dx += 95;
-    //         setTimeout(this.walk(), 1000);
-    //     }
-    // }
 
     collision() {
         this.gameOver = true;
         clearInterval(this.walkInterval);
         clearInterval(this.jumpInterval);
-        // this.ctx.clearRect(this.dx, 200, 200, 200);
-        // this.ctx.drawImage(this.figure, this.sx[this.i % 3], 150, 500, 500, this.dx, 200, 200, 200);
     }
 
     xPosition() {

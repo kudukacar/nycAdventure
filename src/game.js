@@ -44,6 +44,7 @@ class Game {
             if(this.gameOver === true) {
                 clearInterval(this.poopIntervals[i]);
             }
+
             if (this.walker.xPosition() >= 1100) {
                 clearInterval(this.poopIntervals[i]);
                 this.canvas.style.animationPlayState = 'paused';
@@ -60,7 +61,7 @@ class Game {
                 this.ctx.font = "34px sans-serif";
                 this.ctx.fillStyle = "black";
                 this.ctx.textAlign = "center";
-                this.ctx.fillText("Find a patch of grass to clean your shoes!", canvas.width / 2, canvas.height / 2);
+                this.ctx.fillText("Find a patch of grass to clean your shoes!", canvas.width / 2, canvas.height / 3);
                 setTimeout(() => {
                     this.document.location.reload();
                 }, 2500)

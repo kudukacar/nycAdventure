@@ -1,38 +1,50 @@
-# nycAdventure
-* Background and Overview
-    * On the way home in NYC, I evade dolops of sidewalk dog poop, but sometimes in a rush, I mistakenly squash a pile. 
-    * Get home without stepping on dog poop on a nyc sidewalk.
-* Functionality and MVP Features
-    * The board consists of a NYC sidewalk, cluttered with dog poop, and a user (you) avoiding the dog poop to get home.
-    * The page consists of the board as described above, and links to Github and LinkedIn.
-    * Pressing enter starts the game.
-    * Users press the spacebar to jump over poop.
-    * The game ends if the user steps on poop.
-    * Users win if they get home without stepping on poop.
-    * Bonus:  The game has three levels, each level getting progressively more difficult because of a faster pace to get to work.
-    * Bonus:  Users select level 1, 2, or 3 to play.
+# README
 
-* Architecture and Technologies
-    * JavaScript for game logic
-    * HTML5 logic for rendering
-    * CSS for styling and background animation
-    * Webpack to bundle various scripts into a single source
-      
-*   Implementation Timeline
-    * Day 1
-        * Finish project proposal
-    * Day 2
-        * Complete basic page skeleton
-        * Complete board design and rendering
-    * Day 3
-        * Complete obstacle (poop) rendering and functionality
-        * Complete player rendering and functionality
-        * Complete obstacle collision (stepping on poop)
-    * Day 4
-        * Complete game over condition
-        * Complete game win condition
-    * Day 5
-        * Finish styling page
-        * Complete any outstanding MVPs
-    * Week 2 (days 6 - 10)
-        * Complete bonus features of three game levels
+# nycAdventure 
+    A spoof of a New York City sidewalk, riddled with dog poop, and a walker, eager to get home, jumping to avoid the mess.
+![image](https://user-images.githubusercontent.com/41526816/59969836-b553b000-9525-11e9-8152-c2d052e83f2c.png)
+    
+# Site
+[Live](https://kudukacar.github.io/nycAdventure/)
+
+# Technologies
+   * Webpack
+   * JavaScript
+   * HTML5 Canvas
+   * CSS3
+
+# Features 
+   * Developed a collision detection algorithm for sprite characters, and a canvas shape (the dog poop) to assess game        status. 
+   * Integrated sprite character movement with event listeners, translating user input into graphical representations.  
+
+
+# Code Snippets
+
+## Managing asynchronous and synchronous functions
+Syncronous functions execute in the order they're listed, such that a subsequent synchronous function waits for the previous synchronous function to execute.  On the other hand, asynchronous functions do not block other subsequent functions from executing.  If you have both synchronous and asynchronous functions, the synchronous functions execute first.  As such, to execute asynchronous functions first, we place synchronous functions within the callback of an asynchronous function.        
+
+```javascript
+        // this.jumping executes first
+        this.jumping = false;
+        // Then, setInterval, an asynchronous function executes, and the synchronous functions (clearRect, drawImage, etc.) within the callback of setInterval executes.
+        this.walkInterval = setInterval(() => {
+            this.ctx.clearRect(this.dx, 160, 200, 240);
+            this.ctx.drawImage(this.figure, this.sx[this.i % 3], 150, 500, 500, this.dx, 200, 200, 200);
+        // In the code below, setTimeout(), an asynchronous function, executes after the code listed below it.
+            if(this.dx >= 900) {
+                this.collision();
+                setTimeout(() => {
+                    this.document.location.reload();
+                }, 2500)
+                this.ctx.font = "34px sans-serif";
+                this.ctx.fillStyle = "white";
+                this.ctx.textAlign = "center";
+                this.ctx.fillText("You made it home spot free!", canvas.width / 2, canvas.height / 2); 
+            }
+ 
+            this.i += 1;
+            this.dx += 5;
+        }, this.time)
+    }
+
+```
