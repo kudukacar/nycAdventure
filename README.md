@@ -2,7 +2,7 @@
 
 # nycAdventure 
     A spoof of a New York City sidewalk, riddled with dog poop, and a walker, eager to get home, jumping to avoid the mess.
-![image](https://user-images.githubusercontent.com/41526816/59969836-b553b000-9525-11e9-8152-c2d052e83f2c.png)
+![image](https://user-images.githubusercontent.com/41526816/59977505-d953d780-959f-11e9-9bb5-843570766ee5.png)
     
 # Site
 [Live](https://kudukacar.github.io/nycAdventure/)
