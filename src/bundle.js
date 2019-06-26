@@ -363,7 +363,7 @@ class Walker {
             this.walk();
         }
             
-            }, this.time*1)
+            }, this.time)
         }
 
     }
