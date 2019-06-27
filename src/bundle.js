@@ -160,7 +160,7 @@ class Game {
                 this.ctx.font = "34px sans-serif";
                 this.ctx.fillStyle = "black";
                 this.ctx.textAlign = "center";
-                this.ctx.fillText("Find a patch of grass to clean your shoes!", canvas.width / 2, canvas.height / 3);
+                this.ctx.fillText("Find a patch of grass to clean your shoes!", canvas.width / 2, canvas.height / 4 );
                 setTimeout(() => {
                     this.document.location.reload();
                 }, 2500)
@@ -172,7 +172,7 @@ class Game {
     }
 
     xPositionEnd(i) {
-        return this.x[i] - 55;
+        return this.x[i] - 56;
     }
 
     yPositionStart() {
@@ -187,7 +187,7 @@ class Game {
         this.checkGameOver();
         return this.document.addEventListener('keypress', (e) => {
             e.preventDefault();
-            if (e.keyCode === 32) {
+            if (e.keyCode === 32 && this.walker.jumping === false) {
                 return this.walker.jump();
             }
         })
@@ -216,10 +216,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const ctx = canvas.getContext("2d");
     const level1 = document.getElementById("level1");
     const time1 = 200;
-    const intervalTime1 = [20, 20, 20];
+    const intervalTime1 = [10, 10, 10];
     const level2 = document.getElementById("level2");
     const time2 = 150;
-    const intervalTime2 = [15, 15, 15];
+    const intervalTime2 = [10, 10, 10];
     const level3 = document.getElementById("level3");
     const time3 = 100;
     const intervalTime3 = [10, 10, 10];
@@ -313,7 +313,7 @@ class Walker {
         this.jumper.src = 'images/jumper.png';
         this.sx = [540, 1040, 1540];
         this.jx = [600, 1100, 1600];
-        this.dy = [200, 160, 160];
+        this.dy = [300, 200, 200];
         this.i = 0;
         this.j = 0;
         this.dx = -100;
@@ -326,10 +326,10 @@ class Walker {
     walk() {
         this.jumping = false;
         this.walkInterval = setInterval(() => {
-            this.ctx.clearRect(this.dx, 160, 200, 240);
+            this.ctx.clearRect(this.dx, 100, 200, 300);
             this.ctx.drawImage(this.figure, this.sx[this.i % 3], 150, 500, 500, this.dx, 200, 200, 200);
 
-            if(this.dx >= 900) {
+            if(this.dx >= 900 && this.gameOver === false) {
                 this.collision();
                 setTimeout(() => {
                     this.document.location.reload();
@@ -351,21 +351,32 @@ class Walker {
             // this.ctx.clearRect(this.dx, 200, 200, 200);
             this.jumping = true;
             this.jumpInterval = setInterval(() => {
-                this.ctx.clearRect(this.dx, this.dy[this.j % 3], 200, 200);
-                this.ctx.drawImage(this.jumper, this.jx[this.j % 3], 850, 500, 500, this.dx, 160, 200, 200);
-                this.j += 1;
-                this.dx += 35;
-        if(this.j === 3  && this.gameOver === false) {
-            clearInterval(this.jumpInterval);
-            // this.ctx.clearRect(this.dx, 160, 200, 200);
-            this.j = 0;
-            this.dx -= 35;
-            this.walk();
-        }
-            
-            }, this.time)
-        }
+                this.ctx.clearRect(this.dx, 100, 200, this.dy[this.j % 3]);
+                this.ctx.drawImage(this.jumper, this.jx[this.j % 3], 850, 500, 500, this.dx, 100, 200, 200);
 
+                if (this.dx >= 950 && this.gameOver === false) {
+                    this.collision();
+                    setTimeout(() => {
+                        this.document.location.reload();
+                    }, 2500)
+                    this.ctx.font = "34px sans-serif";
+                    this.ctx.fillStyle = "white";
+                    this.ctx.textAlign = "center";
+                    this.ctx.fillText("You made it home spot free!", canvas.width / 2, canvas.height / 2);
+                }
+
+                this.j += 1;
+                this.dx += 45;
+                if(this.j >= 3  && this.gameOver === false) {
+                    clearInterval(this.jumpInterval);
+                    // this.ctx.clearRect(this.dx, 160, 200, 200);
+                    this.jumping = false;
+                    this.j = 0;
+                    this.dx -= 45;
+                    this.walk();
+                }
+            }, this.time * .25)
+        }
     }
 
 
@@ -381,7 +392,7 @@ class Walker {
 
     yPosition() {
         if(this.jumping === true) {
-            return 360
+            return 340
         } else {
             return 400
         }

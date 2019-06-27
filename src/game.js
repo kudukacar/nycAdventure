@@ -61,7 +61,7 @@ class Game {
                 this.ctx.font = "34px sans-serif";
                 this.ctx.fillStyle = "black";
                 this.ctx.textAlign = "center";
-                this.ctx.fillText("Find a patch of grass to clean your shoes!", canvas.width / 2, canvas.height / 3);
+                this.ctx.fillText("Find a patch of grass to clean your shoes!", canvas.width / 2, canvas.height / 4 );
                 setTimeout(() => {
                     this.document.location.reload();
                 }, 2500)
@@ -73,7 +73,7 @@ class Game {
     }
 
     xPositionEnd(i) {
-        return this.x[i] - 55;
+        return this.x[i] - 56;
     }
 
     yPositionStart() {
@@ -88,7 +88,7 @@ class Game {
         this.checkGameOver();
         return this.document.addEventListener('keypress', (e) => {
             e.preventDefault();
-            if (e.keyCode === 32) {
+            if (e.keyCode === 32 && this.walker.jumping === false) {
                 return this.walker.jump();
             }
         })

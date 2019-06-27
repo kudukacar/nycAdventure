@@ -106,7 +106,9 @@ body > h4 {
     font-size: 18px;
 }
 
-body > div > i {
+body > div > a {
     padding: 5px 5px;
-    font-size: 18px;
+    font-size: 24px;
+    color: none;
+    color: rgb(9, 165, 226);
 } 
