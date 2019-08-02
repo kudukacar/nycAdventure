@@ -1,61 +1,38 @@
 import Walker from "./walker";
 import Sound from "./sound";
+import Poop from "./poop";
 
 class Game {
-    constructor(ctx, document, canvas, time, intervalTime) {
+    constructor(ctx, document, canvas, time) {
         this.canvas = canvas;
         this.ctx = ctx;
         this.document = document;
         this.time = time;
-        this.x = [400, 800, 1200];
-        this.dx = 2;
-        this.intervalTime = intervalTime;
-        this.poopIntervals = [this.movePoopInterval0, this.movePoopInterval1, this.movePoopInterval2];
+        this.poop1 = new Poop(400, this.ctx);
+        this.poop2 = new Poop(800, this.ctx);
+        this.poop3 = new Poop(1200, this.ctx);
         this.checkGameOverInterval;
         this.walker = new Walker(this.ctx, this.document, this.time);
         this.poopSound = new Sound("sounds/sound2.mp4", this.document);
         this.gameOver = false;
     }
 
-    drawPoop(i) {
-        this.ctx.beginPath();
-        this.ctx.moveTo(this.x[i] - 50, 390);
-        this.ctx.quadraticCurveTo(this.x[i] - 40, 350, this.x[i] - 60, 380);
-        this.ctx.quadraticCurveTo(this.x[i] - 80, 390, this.x[i] - 50, 390);
-        this.ctx.quadraticCurveTo(this.x[i] - 10, 390, this.x[i], 385);
-        this.ctx.quadraticCurveTo(this.x[i] - 70, 350, this.x[i] - 50, 390);
-        this.ctx.fillStyle = "saddlebrown";
-        this.ctx.fill();
-    }
-
-    movePoop(i) {
-        this.poopIntervals[i] = setInterval(() => {
-            this.ctx.clearRect(this.x[i] - 60, 350, 65, 65);
-            this.drawPoop(i);
-            if (this.x[i] === 0) {
-                this.x[i] = 1200;
-            }
-            const collision = this.walker.xPosition() >= this.xPositionEnd(i) && this.walker.xPosition() <= this.x[i];
-            if (this.walker.yPosition() >= this.yPositionStart() && collision) {
+    checkGameOver() {
+        this.checkGameOverInterval = setInterval(() => {
+            const collision1 = this.walker.xPosition() >= this.poop1.xPositionEnd() && this.walker.xPosition() <= this.poop1.x;
+            const collision2 = this.walker.xPosition() >= this.poop2.xPositionEnd() && this.walker.xPosition() <= this.poop2.x;
+            const collision3 = this.walker.xPosition() >= this.poop3.xPositionEnd() && this.walker.xPosition() <= this.poop3.x;
+            
+            
+            if (this.walker.yPosition() >= this.poop1.yPositionStart() && (collision1 || collision2 || collision3)) {
                 this.poopSound.play();
                 this.gameOver = true;
             }
 
-            if(this.gameOver === true) {
-                clearInterval(this.poopIntervals[i]);
-            }
-
-            if (this.walker.xPosition() >= 1100) {
-                clearInterval(this.poopIntervals[i]);
-                this.canvas.style.animationPlayState = 'paused';
-            }
-            this.x[i] -= this.dx;
-        }, this.intervalTime[i])
-    }
-
-    checkGameOver() {
-        this.checkGameOverInterval = setInterval(() => {
             if (this.gameOver === true) {
+                this.poop1.collision();
+                this.poop2.collision();
+                this.poop3.collision();
                 this.walker.collision();
                 this.canvas.style.animationPlayState = 'paused';
                 this.ctx.font = "34px sans-serif";
@@ -69,21 +46,19 @@ class Game {
             if(this.gameOver === true) {
                 clearInterval(this.checkGameOverInterval);
             }
-        }, 5)
-    }
-
-    xPositionEnd(i) {
-        return this.x[i] - 56;
-    }
-
-    yPositionStart() {
-       return 385
+            if (this.walker.xPosition() >= 1100) {
+                clearInterval(this.poop1.poopInterval);
+                clearInterval(this.poop2.poopInterval);
+                clearInterval(this.poop3.poopInterval);
+                this.canvas.style.animationPlayState = 'paused';
+            }
+        }, 1)
     }
 
     play() {
-        for(let i = 0; i < this.x.length; i++) {
-            this.movePoop(i);
-        }
+        this.poop1.movePoop();
+        this.poop2.movePoop();
+        this.poop3.movePoop();
         this.walker.walk();
         this.checkGameOver();
         return this.document.addEventListener('keypress', (e) => {

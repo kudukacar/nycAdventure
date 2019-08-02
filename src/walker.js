@@ -44,7 +44,6 @@ class Walker {
     jump() {
         if(this.gameOver === false) {
             clearInterval(this.walkInterval);
-            // this.ctx.clearRect(this.dx, 200, 200, 200);
             this.jumping = true;
             this.jumpInterval = setInterval(() => {
                 this.ctx.clearRect(this.dx, 100, 200, this.dy[this.j % 3]);
@@ -59,13 +58,13 @@ class Walker {
                     this.ctx.fillStyle = "white";
                     this.ctx.textAlign = "center";
                     this.ctx.fillText("You made it home spot free!", canvas.width / 2, canvas.height / 2);
+                    this.canvas.style.animationPlayState = 'paused';
                 }
 
                 this.j += 1;
                 this.dx += 45;
                 if(this.j >= 3  && this.gameOver === false) {
                     clearInterval(this.jumpInterval);
-                    // this.ctx.clearRect(this.dx, 160, 200, 200);
                     this.jumping = false;
                     this.j = 0;
                     this.dx -= 45;

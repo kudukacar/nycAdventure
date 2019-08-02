@@ -97,64 +97,42 @@
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _walker__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./walker */ "./src/walker.js");
 /* harmony import */ var _sound__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./sound */ "./src/sound.js");
+/* harmony import */ var _poop__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./poop */ "./src/poop.js");
+
 
 
 
 class Game {
-    constructor(ctx, document, canvas, time, intervalTime) {
+    constructor(ctx, document, canvas, time) {
         this.canvas = canvas;
         this.ctx = ctx;
         this.document = document;
         this.time = time;
-        this.x = [400, 800, 1200];
-        this.dx = 2;
-        this.intervalTime = intervalTime;
-        this.poopIntervals = [this.movePoopInterval0, this.movePoopInterval1, this.movePoopInterval2];
+        this.poop1 = new _poop__WEBPACK_IMPORTED_MODULE_2__["default"](400, this.ctx);
+        this.poop2 = new _poop__WEBPACK_IMPORTED_MODULE_2__["default"](800, this.ctx);
+        this.poop3 = new _poop__WEBPACK_IMPORTED_MODULE_2__["default"](1200, this.ctx);
         this.checkGameOverInterval;
         this.walker = new _walker__WEBPACK_IMPORTED_MODULE_0__["default"](this.ctx, this.document, this.time);
         this.poopSound = new _sound__WEBPACK_IMPORTED_MODULE_1__["default"]("sounds/sound2.mp4", this.document);
         this.gameOver = false;
     }
 
-    drawPoop(i) {
-        this.ctx.beginPath();
-        this.ctx.moveTo(this.x[i] - 50, 390);
-        this.ctx.quadraticCurveTo(this.x[i] - 40, 350, this.x[i] - 60, 380);
-        this.ctx.quadraticCurveTo(this.x[i] - 80, 390, this.x[i] - 50, 390);
-        this.ctx.quadraticCurveTo(this.x[i] - 10, 390, this.x[i], 385);
-        this.ctx.quadraticCurveTo(this.x[i] - 70, 350, this.x[i] - 50, 390);
-        this.ctx.fillStyle = "saddlebrown";
-        this.ctx.fill();
-    }
-
-    movePoop(i) {
-        this.poopIntervals[i] = setInterval(() => {
-            this.ctx.clearRect(this.x[i] - 60, 350, 65, 65);
-            this.drawPoop(i);
-            if (this.x[i] === 0) {
-                this.x[i] = 1200;
-            }
-            const collision = this.walker.xPosition() >= this.xPositionEnd(i) && this.walker.xPosition() <= this.x[i];
-            if (this.walker.yPosition() >= this.yPositionStart() && collision) {
+    checkGameOver() {
+        this.checkGameOverInterval = setInterval(() => {
+            const collision1 = this.walker.xPosition() >= this.poop1.xPositionEnd() && this.walker.xPosition() <= this.poop1.x;
+            const collision2 = this.walker.xPosition() >= this.poop2.xPositionEnd() && this.walker.xPosition() <= this.poop2.x;
+            const collision3 = this.walker.xPosition() >= this.poop3.xPositionEnd() && this.walker.xPosition() <= this.poop3.x;
+            
+            
+            if (this.walker.yPosition() >= this.poop1.yPositionStart() && (collision1 || collision2 || collision3)) {
                 this.poopSound.play();
                 this.gameOver = true;
             }
 
-            if(this.gameOver === true) {
-                clearInterval(this.poopIntervals[i]);
-            }
-
-            if (this.walker.xPosition() >= 1100) {
-                clearInterval(this.poopIntervals[i]);
-                this.canvas.style.animationPlayState = 'paused';
-            }
-            this.x[i] -= this.dx;
-        }, this.intervalTime[i])
-    }
-
-    checkGameOver() {
-        this.checkGameOverInterval = setInterval(() => {
             if (this.gameOver === true) {
+                this.poop1.collision();
+                this.poop2.collision();
+                this.poop3.collision();
                 this.walker.collision();
                 this.canvas.style.animationPlayState = 'paused';
                 this.ctx.font = "34px sans-serif";
@@ -168,21 +146,19 @@ class Game {
             if(this.gameOver === true) {
                 clearInterval(this.checkGameOverInterval);
             }
-        }, 5)
-    }
-
-    xPositionEnd(i) {
-        return this.x[i] - 56;
-    }
-
-    yPositionStart() {
-       return 385
+            if (this.walker.xPosition() >= 1100) {
+                clearInterval(this.poop1.poopInterval);
+                clearInterval(this.poop2.poopInterval);
+                clearInterval(this.poop3.poopInterval);
+                this.canvas.style.animationPlayState = 'paused';
+            }
+        }, 1)
     }
 
     play() {
-        for(let i = 0; i < this.x.length; i++) {
-            this.movePoop(i);
-        }
+        this.poop1.movePoop();
+        this.poop2.movePoop();
+        this.poop3.movePoop();
         this.walker.walk();
         this.checkGameOver();
         return this.document.addEventListener('keypress', (e) => {
@@ -216,13 +192,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const ctx = canvas.getContext("2d");
     const level1 = document.getElementById("level1");
     const time1 = 200;
-    const intervalTime1 = [10, 10, 10];
     const level2 = document.getElementById("level2");
     const time2 = 150;
-    const intervalTime2 = [10, 10, 10];
     const level3 = document.getElementById("level3");
     const time3 = 100;
-    const intervalTime3 = [10, 10, 10];
     canvas.style.animationPlayState='paused';
     let replay = false;
     level1.addEventListener('click', (e) => {
@@ -230,7 +203,7 @@ document.addEventListener("DOMContentLoaded", () => {
             e.preventDefault();
             replay = true;
             ctx.clearRect(0, 0, 1200, 400);
-            const game = new _game__WEBPACK_IMPORTED_MODULE_0__["default"](ctx, document, canvas, time1, intervalTime1);
+            const game = new _game__WEBPACK_IMPORTED_MODULE_0__["default"](ctx, document, canvas, time1);
             game.play();
             canvas.style.animationPlayState = 'running';
         } 
@@ -240,7 +213,7 @@ document.addEventListener("DOMContentLoaded", () => {
             e.preventDefault();
             replay = true;
             ctx.clearRect(0, 0, 1200, 400);
-            const game = new _game__WEBPACK_IMPORTED_MODULE_0__["default"](ctx, document, canvas, time2, intervalTime2);
+            const game = new _game__WEBPACK_IMPORTED_MODULE_0__["default"](ctx, document, canvas, time2);
             game.play();
             canvas.style.animationPlayState = 'running';
         }
@@ -250,13 +223,71 @@ document.addEventListener("DOMContentLoaded", () => {
             e.preventDefault();
             replay = true;
             ctx.clearRect(0, 0, 1200, 400);
-            const game = new _game__WEBPACK_IMPORTED_MODULE_0__["default"](ctx, document, canvas, time3, intervalTime3);
+            const game = new _game__WEBPACK_IMPORTED_MODULE_0__["default"](ctx, document, canvas, time3);
             game.play();
             canvas.style.animationPlayState = 'running';
         }
     }) 
 })
 
+
+/***/ }),
+
+/***/ "./src/poop.js":
+/*!*********************!*\
+  !*** ./src/poop.js ***!
+  \*********************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+class Poop {
+    constructor(x, ctx) {
+        this.x = x;
+        this.ctx = ctx;
+        this.dx = 2;
+        this.poopInterval;
+        this.gameOver = false;
+    }
+
+    drawPoop() {
+        this.ctx.beginPath();
+        this.ctx.moveTo(this.x - 50, 390);
+        this.ctx.quadraticCurveTo(this.x - 40, 350, this.x - 60, 380);
+        this.ctx.quadraticCurveTo(this.x - 80, 390, this.x - 50, 390);
+        this.ctx.quadraticCurveTo(this.x - 10, 390, this.x, 385);
+        this.ctx.quadraticCurveTo(this.x - 70, 350, this.x - 50, 390);
+        this.ctx.fillStyle = "saddlebrown";
+        this.ctx.fill();
+    }
+
+    movePoop() {
+        this.poopInterval = setInterval(() => {
+            this.ctx.clearRect(this.x - 60, 350, 65, 65);
+            this.drawPoop();
+            if (this.x === 0) {
+                this.x = 1200;
+            }
+            this.x -= this.dx;
+        }, 10)
+    }
+
+    xPositionEnd() {
+        return this.x - 56;
+    }
+
+    yPositionStart() {
+        return 385
+    }
+
+    collision() {
+        this.gameOver = true;
+        clearInterval(this.poopInterval);
+    }
+}
+
+/* harmony default export */ __webpack_exports__["default"] = (Poop);
 
 /***/ }),
 
@@ -348,7 +379,6 @@ class Walker {
     jump() {
         if(this.gameOver === false) {
             clearInterval(this.walkInterval);
-            // this.ctx.clearRect(this.dx, 200, 200, 200);
             this.jumping = true;
             this.jumpInterval = setInterval(() => {
                 this.ctx.clearRect(this.dx, 100, 200, this.dy[this.j % 3]);
@@ -363,13 +393,13 @@ class Walker {
                     this.ctx.fillStyle = "white";
                     this.ctx.textAlign = "center";
                     this.ctx.fillText("You made it home spot free!", canvas.width / 2, canvas.height / 2);
+                    this.canvas.style.animationPlayState = 'paused';
                 }
 
                 this.j += 1;
                 this.dx += 45;
                 if(this.j >= 3  && this.gameOver === false) {
                     clearInterval(this.jumpInterval);
-                    // this.ctx.clearRect(this.dx, 160, 200, 200);
                     this.jumping = false;
                     this.j = 0;
                     this.dx -= 45;
