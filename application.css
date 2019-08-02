@@ -49,8 +49,8 @@ table {
 
 canvas {
     /* border: 1px solid black; */
-    /* background-image: url(https://backgroundcheckall.com/wp-content/uploads/2017/12/city-background-cartoon-5.jpg); */
-    background-image: url(https://t4.ftcdn.net/jpg/00/96/75/65/240_F_96756549_IaZNQm8X4vKEPUkllbIVcqR2fK9PqxRz.jpg);
+    background-image: url(https://img.freepik.com/free-vector/summer-city-park-with-street-lights_1262-16617.jpg?size=626&ext=jpg);
+    /* background-image: url(https://t4.ftcdn.net/jpg/00/96/75/65/240_F_96756549_IaZNQm8X4vKEPUkllbIVcqR2fK9PqxRz.jpg); */
     background-repeat: repeat-x;
     background-size: 150% 100%;
     background-position: 0px 0px;
@@ -76,14 +76,14 @@ body > div > button {
     border-radius: 5px;
     font-size: 16px;
     font-weight: bold;
-    background-color: rgb(9, 165, 226);
+    background-color: rgb(81, 165, 51);
     color: #ffffff;
     border: none;
 
 }
 
 body > div > button:hover {
-     background-color:  rgb(4, 115, 158);
+     background-color:   rgb(81, 175, 51);
      cursor: pointer;
 }
 
@@ -110,5 +110,5 @@ body > div > a {
     padding: 5px 5px;
     font-size: 24px;
     color: none;
-    color: rgb(9, 165, 226);
+    color: rgb(81, 165, 51);
 } 

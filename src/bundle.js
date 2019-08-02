@@ -146,7 +146,7 @@ class Game {
             if(this.gameOver === true) {
                 clearInterval(this.checkGameOverInterval);
             }
-            if (this.walker.xPosition() >= 1100) {
+            if (this.walker.dx >= 950) {
                 clearInterval(this.poop1.poopInterval);
                 clearInterval(this.poop2.poopInterval);
                 clearInterval(this.poop3.poopInterval);
@@ -360,13 +360,13 @@ class Walker {
             this.ctx.clearRect(this.dx, 100, 200, 300);
             this.ctx.drawImage(this.figure, this.sx[this.i % 3], 150, 500, 500, this.dx, 200, 200, 200);
 
-            if(this.dx >= 900 && this.gameOver === false) {
+            if(this.dx >= 950 && this.gameOver === false) {
                 this.collision();
                 setTimeout(() => {
                     this.document.location.reload();
                 }, 2500)
                 this.ctx.font = "34px sans-serif";
-                this.ctx.fillStyle = "white";
+                this.ctx.fillStyle = "black";
                 this.ctx.textAlign = "center";
                 this.ctx.fillText("You made it home spot free!", canvas.width / 2, canvas.height / 2); 
             }
@@ -384,13 +384,13 @@ class Walker {
                 this.ctx.clearRect(this.dx, 100, 200, this.dy[this.j % 3]);
                 this.ctx.drawImage(this.jumper, this.jx[this.j % 3], 850, 500, 500, this.dx, 100, 200, 200);
 
-                if (this.dx >= 900 && this.gameOver === false) {
+                if (this.dx >= 950 && this.gameOver === false) {
                     this.collision();
                     setTimeout(() => {
                         this.document.location.reload();
                     }, 2500)
                     this.ctx.font = "34px sans-serif";
-                    this.ctx.fillStyle = "white";
+                    this.ctx.fillStyle = "black";
                     this.ctx.textAlign = "center";
                     this.ctx.fillText("You made it home spot free!", canvas.width / 2, canvas.height / 2);
                     this.canvas.style.animationPlayState = 'paused';

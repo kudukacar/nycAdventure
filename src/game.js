@@ -46,7 +46,7 @@ class Game {
             if(this.gameOver === true) {
                 clearInterval(this.checkGameOverInterval);
             }
-            if (this.walker.xPosition() >= 1100) {
+            if (this.walker.dx >= 950) {
                 clearInterval(this.poop1.poopInterval);
                 clearInterval(this.poop2.poopInterval);
                 clearInterval(this.poop3.poopInterval);
