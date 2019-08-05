@@ -12,34 +12,23 @@ document.addEventListener("DOMContentLoaded", () => {
     const time3 = 100;
     canvas.style.animationPlayState='paused';
     let replay = false;
-    level1.addEventListener('click', (e) => {
-        if (replay === false) {
+    const playGame = (time, e) => {
+        if(replay === false) {
             e.preventDefault();
             replay = true;
             ctx.clearRect(0, 0, 1200, 400);
-            const game = new Game(ctx, document, canvas, time1);
+            const game = new Game(ctx, document, canvas, time);
             game.play();
             canvas.style.animationPlayState = 'running';
-        } 
+        }
+    }
+    level1.addEventListener('click', (e) => {
+        playGame(time1, e); 
     }) 
     level2.addEventListener('click', (e) => {
-        if (replay === false) {
-            e.preventDefault();
-            replay = true;
-            ctx.clearRect(0, 0, 1200, 400);
-            const game = new Game(ctx, document, canvas, time2);
-            game.play();
-            canvas.style.animationPlayState = 'running';
-        }
+        playGame(time2, e);
     }) 
     level3.addEventListener('click', (e) => {
-        if (replay === false) {
-            e.preventDefault();
-            replay = true;
-            ctx.clearRect(0, 0, 1200, 400);
-            const game = new Game(ctx, document, canvas, time3);
-            game.play();
-            canvas.style.animationPlayState = 'running';
-        }
+        playGame(time3, e);
     }) 
 })

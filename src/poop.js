@@ -5,9 +5,16 @@ class Poop {
         this.dx = 2;
         this.poopInterval;
         this.gameOver = false;
+        window.requestAnimFrame = (function(callback) {
+            return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame || function (callback) {
+                this.poopInterval = window.setInterval(callback, 10);
+            }
+        })();
+        window.cancelAnimFrame = window.cancelAnimationFrame || window.webkitCancelAnimationFrame || window.mozCancelAnimationFrame || window.oCancelAnimationFrame || window.msCancelAnimationFrame || window.clearInterval(this.poopInterval);
     }
 
     drawPoop() {
+        this.ctx.clearRect(this.x - 60, 350, 65, 65);
         this.ctx.beginPath();
         this.ctx.moveTo(this.x - 50, 390);
         this.ctx.quadraticCurveTo(this.x - 40, 350, this.x - 60, 380);
@@ -16,17 +23,15 @@ class Poop {
         this.ctx.quadraticCurveTo(this.x - 70, 350, this.x - 50, 390);
         this.ctx.fillStyle = "saddlebrown";
         this.ctx.fill();
+        if(this.x === 0) {
+            this.x = 1200;
+        }
+        this.x -= this.dx;
+        this.poopInterval = requestAnimFrame(() => this.drawPoop());
     }
 
     movePoop() {
-        this.poopInterval = setInterval(() => {
-            this.ctx.clearRect(this.x - 60, 350, 65, 65);
-            this.drawPoop();
-            if (this.x === 0) {
-                this.x = 1200;
-            }
-            this.x -= this.dx;
-        }, 10)
+        this.poopInterval = requestAnimFrame(() => this.drawPoop());
     }
 
     xPositionEnd() {
@@ -39,7 +44,7 @@ class Poop {
 
     collision() {
         this.gameOver = true;
-        clearInterval(this.poopInterval);
+        cancelAnimFrame(this.poopInterval);
     }
 }
 

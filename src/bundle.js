@@ -123,7 +123,6 @@ class Game {
             const collision2 = this.walker.xPosition() >= this.poop2.xPositionEnd() && this.walker.xPosition() <= this.poop2.x;
             const collision3 = this.walker.xPosition() >= this.poop3.xPositionEnd() && this.walker.xPosition() <= this.poop3.x;
             
-            
             if (this.walker.yPosition() >= this.poop1.yPositionStart() && (collision1 || collision2 || collision3)) {
                 this.poopSound.play();
                 this.gameOver = true;
@@ -146,10 +145,10 @@ class Game {
             if(this.gameOver === true) {
                 clearInterval(this.checkGameOverInterval);
             }
-            if (this.walker.dx >= 950) {
-                clearInterval(this.poop1.poopInterval);
-                clearInterval(this.poop2.poopInterval);
-                clearInterval(this.poop3.poopInterval);
+            if (this.walker.dx >= 900) {
+                this.poop1.collision();
+                this.poop2.collision();
+                this.poop3.collision();
                 this.canvas.style.animationPlayState = 'paused';
             }
         }, 1)
@@ -198,35 +197,24 @@ document.addEventListener("DOMContentLoaded", () => {
     const time3 = 100;
     canvas.style.animationPlayState='paused';
     let replay = false;
-    level1.addEventListener('click', (e) => {
-        if (replay === false) {
+    const playGame = (time, e) => {
+        if(replay === false) {
             e.preventDefault();
             replay = true;
             ctx.clearRect(0, 0, 1200, 400);
-            const game = new _game__WEBPACK_IMPORTED_MODULE_0__["default"](ctx, document, canvas, time1);
+            const game = new _game__WEBPACK_IMPORTED_MODULE_0__["default"](ctx, document, canvas, time);
             game.play();
             canvas.style.animationPlayState = 'running';
-        } 
+        }
+    }
+    level1.addEventListener('click', (e) => {
+        playGame(time1, e); 
     }) 
     level2.addEventListener('click', (e) => {
-        if (replay === false) {
-            e.preventDefault();
-            replay = true;
-            ctx.clearRect(0, 0, 1200, 400);
-            const game = new _game__WEBPACK_IMPORTED_MODULE_0__["default"](ctx, document, canvas, time2);
-            game.play();
-            canvas.style.animationPlayState = 'running';
-        }
+        playGame(time2, e);
     }) 
     level3.addEventListener('click', (e) => {
-        if (replay === false) {
-            e.preventDefault();
-            replay = true;
-            ctx.clearRect(0, 0, 1200, 400);
-            const game = new _game__WEBPACK_IMPORTED_MODULE_0__["default"](ctx, document, canvas, time3);
-            game.play();
-            canvas.style.animationPlayState = 'running';
-        }
+        playGame(time3, e);
     }) 
 })
 
@@ -249,9 +237,16 @@ class Poop {
         this.dx = 2;
         this.poopInterval;
         this.gameOver = false;
+        window.requestAnimFrame = (function(callback) {
+            return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame || function (callback) {
+                this.poopInterval = window.setInterval(callback, 10);
+            }
+        })();
+        window.cancelAnimFrame = window.cancelAnimationFrame || window.webkitCancelAnimationFrame || window.mozCancelAnimationFrame || window.oCancelAnimationFrame || window.msCancelAnimationFrame || window.clearInterval(this.poopInterval);
     }
 
     drawPoop() {
+        this.ctx.clearRect(this.x - 60, 350, 65, 65);
         this.ctx.beginPath();
         this.ctx.moveTo(this.x - 50, 390);
         this.ctx.quadraticCurveTo(this.x - 40, 350, this.x - 60, 380);
@@ -260,17 +255,15 @@ class Poop {
         this.ctx.quadraticCurveTo(this.x - 70, 350, this.x - 50, 390);
         this.ctx.fillStyle = "saddlebrown";
         this.ctx.fill();
+        if(this.x === 0) {
+            this.x = 1200;
+        }
+        this.x -= this.dx;
+        this.poopInterval = requestAnimFrame(() => this.drawPoop());
     }
 
     movePoop() {
-        this.poopInterval = setInterval(() => {
-            this.ctx.clearRect(this.x - 60, 350, 65, 65);
-            this.drawPoop();
-            if (this.x === 0) {
-                this.x = 1200;
-            }
-            this.x -= this.dx;
-        }, 10)
+        this.poopInterval = requestAnimFrame(() => this.drawPoop());
     }
 
     xPositionEnd() {
@@ -283,7 +276,7 @@ class Poop {
 
     collision() {
         this.gameOver = true;
-        clearInterval(this.poopInterval);
+        cancelAnimFrame(this.poopInterval);
     }
 }
 
@@ -360,7 +353,7 @@ class Walker {
             this.ctx.clearRect(this.dx, 100, 200, 300);
             this.ctx.drawImage(this.figure, this.sx[this.i % 3], 150, 500, 500, this.dx, 200, 200, 200);
 
-            if(this.dx >= 950 && this.gameOver === false) {
+            if(this.dx >= 925 && this.gameOver === false) {
                 this.collision();
                 setTimeout(() => {
                     this.document.location.reload();
@@ -368,7 +361,8 @@ class Walker {
                 this.ctx.font = "34px sans-serif";
                 this.ctx.fillStyle = "black";
                 this.ctx.textAlign = "center";
-                this.ctx.fillText("You made it home spot free!", canvas.width / 2, canvas.height / 2); 
+                this.ctx.fillText("You made it home spot free!", canvas.width / 2, canvas.height / 2);
+                this.canvas.style.animationPlayState = 'paused';
             }
  
             this.i += 1;
@@ -384,7 +378,7 @@ class Walker {
                 this.ctx.clearRect(this.dx, 100, 200, this.dy[this.j % 3]);
                 this.ctx.drawImage(this.jumper, this.jx[this.j % 3], 850, 500, 500, this.dx, 100, 200, 200);
 
-                if (this.dx >= 950 && this.gameOver === false) {
+                if (this.dx >= 925 && this.gameOver === false) {
                     this.collision();
                     setTimeout(() => {
                         this.document.location.reload();

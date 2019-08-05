@@ -23,7 +23,6 @@ class Game {
             const collision2 = this.walker.xPosition() >= this.poop2.xPositionEnd() && this.walker.xPosition() <= this.poop2.x;
             const collision3 = this.walker.xPosition() >= this.poop3.xPositionEnd() && this.walker.xPosition() <= this.poop3.x;
             
-            
             if (this.walker.yPosition() >= this.poop1.yPositionStart() && (collision1 || collision2 || collision3)) {
                 this.poopSound.play();
                 this.gameOver = true;
@@ -46,10 +45,10 @@ class Game {
             if(this.gameOver === true) {
                 clearInterval(this.checkGameOverInterval);
             }
-            if (this.walker.dx >= 950) {
-                clearInterval(this.poop1.poopInterval);
-                clearInterval(this.poop2.poopInterval);
-                clearInterval(this.poop3.poopInterval);
+            if (this.walker.dx >= 900) {
+                this.poop1.collision();
+                this.poop2.collision();
+                this.poop3.collision();
                 this.canvas.style.animationPlayState = 'paused';
             }
         }, 1)
